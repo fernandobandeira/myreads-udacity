@@ -20,10 +20,13 @@ class BooksApp extends React.Component {
 
     searchBooks(query) {
         if (query === '') {
-            this.setState({booksFound: []})
-            return
+            return this.clearBooksFound()
         }
         BooksAPI.search(query).then(booksFound => this.setState({booksFound}))
+    }
+
+    clearBooksFound() {
+        this.setState({booksFound: []})
     }
 
     filterBooksByShelf(shelf) {
@@ -33,23 +36,20 @@ class BooksApp extends React.Component {
     render() {
         return (
             <div className="app">
-                <Route path="/search" render={() => {
-                    this.searchBooks()
-                    return (
-                        <div className="search-books">
-                            <div className="search-books-bar">
-                                <Link className="close-search" to="/">Close</Link>
-                                <div className="search-books-input-wrapper">
-                                    <input type="text" placeholder="Search by title or author"
-                                           onChange={event => this.searchBooks(event.target.value)}/>
-                                </div>
-                            </div>
-                            <div className="search-books-results">
-                                <ListBooks books={this.state.booksFound}/>
+                <Route path="/search" render={() => (
+                    <div className="search-books">
+                        <div className="search-books-bar">
+                            <Link className="close-search" to="/">Close</Link>
+                            <div className="search-books-input-wrapper">
+                                <input type="text" placeholder="Search by title or author"
+                                       onChange={event => this.searchBooks(event.target.value)}/>
                             </div>
                         </div>
-                    )
-                }}/>
+                        <div className="search-books-results">
+                            <ListBooks books={this.state.booksFound}/>
+                        </div>
+                    </div>
+                )}/>
                 <Route path="/" exact render={() => (
                     <div className="list-books">
                         <div className="list-books-title">
@@ -78,7 +78,7 @@ class BooksApp extends React.Component {
                             </div>
                         </div>
                         <div className="open-search">
-                            <Link to="/search">Add a book</Link>
+                            <Link to="/search" onClick={event => this.clearBooksFound()}>Add a book</Link>
                         </div>
                     </div>
                 )}/>
