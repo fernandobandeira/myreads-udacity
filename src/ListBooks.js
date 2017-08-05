@@ -16,7 +16,8 @@ class ListBooks extends Component {
                                     }}/>
                                 )}
                                 <div className="book-shelf-changer">
-                                    <select value={book.shelf}>
+                                    <select value={book.shelf}
+                                            onChange={event => this.props.onChangeBookShelf(book, event.target.value)}>
                                         <option disabled>Move to...</option>
                                         <option value="currentlyReading">Currently Reading</option>
                                         <option value="wantToRead">Want to Read</option>
