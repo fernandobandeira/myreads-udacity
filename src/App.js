@@ -21,6 +21,8 @@ class BooksApp extends React.Component {
         BooksAPI.getAll().then(books => this.setState({books}))
     }
 
+    debouncedGetBooks = debounce(this.getBooks)
+
     searchBooks(query) {
         if (query === '') {
             return this.clearBooksFound()
@@ -37,12 +39,12 @@ class BooksApp extends React.Component {
         this.setState({booksFound: []})
     }
 
-    filterBooksByShelf(shelf) {
-        return this.state.books.filter(book => book.shelf === shelf)
+    filterBooks(books, value, prop = 'shelf') {
+        return books.filter(book => book[prop] === value)
     }
 
     changeBookShelf(book, shelf) {
-        BooksAPI.update(book, shelf).then(() => this.getBooks())
+        BooksAPI.update(book, shelf).then(() => this.debouncedGetBooks())
     }
 
     render() {
@@ -59,7 +61,11 @@ class BooksApp extends React.Component {
                         </div>
                         <div className="search-books-results">
                             <ListBooks books={this.state.booksFound}
-                                       onChangeBookShelf={(book, shelf) => this.changeBookShelf(book, shelf)}/>
+                                       onChangeBookShelf={(book, shelf) => this.changeBookShelf(book, shelf)}
+                                       getBookShelf={(book) => {
+                                           let b = this.filterBooks(this.state.books, book.id, 'id')
+                                           return b.length > 0 ? b[0].shelf : 'none'
+                                       }}/>
                         </div>
                     </div>
                 )}/>
@@ -73,21 +79,21 @@ class BooksApp extends React.Component {
                                 <div className="bookshelf">
                                     <h2 className="bookshelf-title">Currently Reading</h2>
                                     <div className="bookshelf-books">
-                                        <ListBooks books={this.filterBooksByShelf('currentlyReading')}
+                                        <ListBooks books={this.filterBooks(this.state.books, 'currentlyReading')}
                                                    onChangeBookShelf={(book, shelf) => this.changeBookShelf(book, shelf)}/>
                                     </div>
                                 </div>
                                 <div className="bookshelf">
                                     <h2 className="bookshelf-title">Want to Read</h2>
                                     <div className="bookshelf-books">
-                                        <ListBooks books={this.filterBooksByShelf('wantToRead')}
+                                        <ListBooks books={this.filterBooks(this.state.books, 'wantToRead')}
                                                    onChangeBookShelf={(book, shelf) => this.changeBookShelf(book, shelf)}/>
                                     </div>
                                 </div>
                                 <div className="bookshelf">
                                     <h2 className="bookshelf-title">Read</h2>
                                     <div className="bookshelf-books">
-                                        <ListBooks books={this.filterBooksByShelf('read')}
+                                        <ListBooks books={this.filterBooks(this.state.books, 'read')}
                                                    onChangeBookShelf={(book, shelf) => this.changeBookShelf(book, shelf)}/>
                                     </div>
                                 </div>
