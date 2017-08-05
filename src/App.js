@@ -10,7 +10,15 @@ class BooksApp extends React.Component {
   }
 
   componentDidMount() {
-    BooksAPI.getAll().then((books) => this.setState({ books }) )
+    this.getBooks()
+  }
+
+  getBooks() {
+      BooksAPI.getAll().then((books) => this.setState({ books }) )
+  }
+
+  filterBooksByShelf(shelf) {
+      return this.state.books.filter(book => book.shelf === shelf)
   }
 
   render() {
@@ -48,43 +56,19 @@ class BooksApp extends React.Component {
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Currently Reading</h2>
                   <div className="bookshelf-books">
-                    <ol className="books-grid">
-                      <li>
-
-                      </li>
-                      <li>
-
-                      </li>
-                    </ol>
+                      <ListBooks books={this.filterBooksByShelf('currentlyReading')}/>
                   </div>
                 </div>
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Want to Read</h2>
                   <div className="bookshelf-books">
-                    <ol className="books-grid">
-                      <li>
-
-                      </li>
-                      <li>
-
-                      </li>
-                    </ol>
+                      <ListBooks books={this.filterBooksByShelf('wantToRead')}/>
                   </div>
                 </div>
                 <div className="bookshelf">
                   <h2 className="bookshelf-title">Read</h2>
                   <div className="bookshelf-books">
-                    <ol className="books-grid">
-                      <li>
-
-                      </li>
-                      <li>
-
-                      </li>
-                      <li>
-
-                      </li>
-                    </ol>
+                      <ListBooks books={this.filterBooksByShelf('read')}/>
                   </div>
                 </div>
               </div>
